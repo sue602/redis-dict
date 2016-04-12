@@ -1,11 +1,21 @@
-# $@ -- 目标文件，$^ -- 所有依赖文件
-# main 即为可执行文件
-# *.c (用 -c 生成,-c是只编译，不链接，默认GCC/G++是编译链接) *.o(目标文件（二进制）) ，-o 命令可以给可执行文件命名
+# 可执行文件
+TARGET=main
+# C文件
+SRCS = main.c dict.c sds.c zmalloc.c adlist.c
+# 目标文件
+OBJS = $(SRCS:.c=.o)
 
-main: main.o dict.o sds.o zmalloc.o adlist.o
-	gcc -o $@ $^	### gcc -o main main.o
-main.o: main.c dict.c sds.c zmalloc.c adlist.c
-	gcc -c main.c dict.c sds.c zmalloc.c adlist.c
+# 指令编译器和选项
+CC=gcc
+CFLAGS=-Wall -std=gnu99
 
-clean: 
-	rm main.o dict.o sds.o zmalloc.o adlist.o main
+$(TARGET):$(OBJS)
+#	@echo TARGET:$@
+#	@echo OBJECTS:$^
+	$(CC) -o $@ $^
+
+clean:
+	rm -rf $(TARGET) $(OBJS)
+
+%.o:%.c
+	$(CC) $(CFLAGS) -o $@ -c $<
